@@ -58,6 +58,8 @@ paths:
   /api/v1/orders/{id}:
     get:
       summary: Get Order by ID
+      tags:
+        - store
       operationId: getOrderById
       parameters:
         - $ref: '#/components/parameters/IdParam'
@@ -118,6 +120,8 @@ paths:
     get:
       summary: Search Customers
       description: Case-insensitive substring search on name
+      tags:
+        - store
       parameters:
         - $ref: '#/components/parameters/SearchQuery'
       responses:
@@ -178,6 +182,8 @@ paths:
   /api/v1/products/{id}:
     get:
       summary: Get Product by ID
+      tags:
+        - store
       operationId: getProductById
       parameters:
         - $ref: '#/components/parameters/IdParam'

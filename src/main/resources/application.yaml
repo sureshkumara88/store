@@ -18,3 +18,9 @@ spring:
 server:
   error:
     include-message: always
+springdoc:
+  swagger-ui:
+    # Point Swagger UI to your static YAML served by Spring
+    url: /OpenAPI.yaml
+    # Don’t pre-load the generated spec; show our YAML by default
+    disable-swagger-default-url: true
