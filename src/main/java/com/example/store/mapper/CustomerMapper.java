@@ -6,7 +6,9 @@ import com.example.store.entity.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        uses = {OrderMapper.class})
 public interface CustomerMapper {
     @Mapping(target = "orders", source = "orders")
     CustomerDTO toDto(Customer customer);

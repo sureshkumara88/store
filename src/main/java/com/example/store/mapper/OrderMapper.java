@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(
         componentModel = "spring",
-        uses = {ProductMapper.class})
+        uses = {CustomerMapper.class, ProductMapper.class})
 public interface OrderMapper {
 
     @Mapping(target = "orders", ignore = true)
