@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3-schema
+      author: sureshkumara88@gmail.com
+      changes:
+        - sqlFile:
+            path: db/changelog/schema-2.sql

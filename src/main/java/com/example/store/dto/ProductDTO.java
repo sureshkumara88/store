@@ -7,11 +7,11 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CustomerDTO {
+public class ProductDTO {
     private Long id;
 
-    @NotBlank(message = "name is required")
-    private String name;
+    @NotBlank(message = "description is required")
+    private String description;
 
-    private List<CustomerOrderDTO> orders;
+    private List<Long> orderIds;
 }

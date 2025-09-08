@@ -15,47 +15,111 @@ servers:
   - url: 'http://localhost:8080'
     description: dev
 paths:
-  /order:
+  /api/v1/orders:
     get:
       summary: Get Orders
       tags:
         - store
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Order'
+                $ref: '#/components/schemas/PageOrder'
       operationId: getOrders
-      description: Get all orders
+      description: Get a paginated list of orders
     post:
       summary: Create Order
       tags:
         - store
-      responses:
-        '201':
-          description: Created
       operationId: createOrder
       description: Create a new order
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  format: int64
-                descriptioon:
-                  type: string
-  /customer:
+              $ref: '#/components/schemas/OrderCreate'
+      responses:
+        '201':
+          description: Created
+          headers:
+            $ref: '#/components/headers/Location'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/orders/{id}:
+    get:
+      summary: Get Order by ID
+      operationId: getOrderById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/customers:
     get:
       summary: Get Customers
       tags:
         - store
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageCustomer'
+      operationId: getCustomers
+      description: Get a paginated list of customers
+    post:
+      summary: Create Customer
+      tags:
+        - store
+      operationId: createCustomer
+      description: Create a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerCreate'
+      responses:
+        '201':
+          description: Created
+          headers:
+            $ref: '#/components/headers/Location'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/customers/search:
+    get:
+      summary: Search Customers
+      description: Case-insensitive substring search on name
+      parameters:
+        - $ref: '#/components/parameters/SearchQuery'
       responses:
         '200':
           description: OK
@@ -65,76 +129,247 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Customer'
-      operationId: getCustomers
-      description: Get all customers
-    post:
-      summary: Create Customer
-      tags:
-        - store
-      responses:
-        '201':
-          description: Created
-      operationId: createCustomer
-      description: Create a new customer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  format: int64
-                name:
-                  type: string
-  /products:
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/products:
     get:
       summary: Get Products
       tags:
         - store
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  description:
-                    type: string
-                  orders:
-                    type: array
-                    items:
-                      type: integer
-                      format: int64
+                $ref: '#/components/schemas/PageProduct'
       operationId: getProducts
-      description: Get all products
+      description: Get a paginated list of products
     post:
       summary: Create Product
       tags:
         - store
-      responses:
-        '201':
-          description: Created
       operationId: createProduct
       description: Create a new product
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  format: int64
-                description:
-                  type: string
-                  x-stoplight:
-                    id: jbh0jzkonppv8
+              $ref: '#/components/schemas/ProductCreate'
+      responses:
+        '201':
+          description: Created
+          headers:
+            $ref: '#/components/headers/Location'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/products/{id}:
+    get:
+      summary: Get Product by ID
+      operationId: getProductById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
+  headers:
+    Location:
+      description: URL of the created resource
+      schema:
+        type: string
+        format: uri
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: 0-based page index
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    SizeParam:
+      name: size
+      in: query
+      description: Page size
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 20
+    IdParam:
+      name: id
+      in: path
+      required: true
+      description: Resource identifier
+      schema:
+        type: integer
+        format: int64
+    SearchQuery:
+      name: q
+      in: query
+      required: true
+      description: search query
+      schema:
+        type: string
+        minLength: 1
   schemas:
+    Sort:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    Pageable:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          minimum: 0
+        pageSize:
+          type: integer
+          minimum: 1
+        sort:
+          $ref: '#/components/schemas/Sort'
+        offset:
+          type: integer
+          minimum: 0
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    PageMeta:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+          last:
+            type: boolean
+          totalPages:
+            type: integer
+            minimum: 0
+          totalElements:
+            type: integer
+            minimum: 0
+          first:
+            type: boolean
+          size:
+            type: integer
+            minimum: 1
+          number:
+            type: integer
+            minimum: 0
+          sort:
+            $ref: '#/components/schemas/Sort'
+          numberOfElements:
+            type: integer
+            minimum: 0
+          empty:
+            type: boolean
+    PageOrder:
+      allOf:
+        - $ref: '#/components/schemas/PageMeta'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Order'
+      example:
+        page: 0
+        size: 20
+        totalElements: 2
+        totalPages: 1
+        sort: 'id,asc'
+        content:
+          - id: 123
+            description: 'First order'
+            customer:
+              id: 101
+              name: 'Suresh Kumar'
+            products:
+              - id: 501
+                description: 'Mug'
+          - id: 124
+            description: 'Office supplies'
+            customer:
+              id: 101
+              name: 'Suresh Kumar'
+            products:
+              - id: 502
+              - description: 'Wet wipes'
+    PageCustomer:
+      allOf:
+        - $ref: '#/components/schemas/PageMeta'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Customer'
+      example:
+        page: 0
+        size: 20
+        totalElements: 1
+        totalPages: 1
+        sort: 'name,asc'
+        content:
+          - id: 101
+            name: 'Suresh Kumar'
+            orders:
+              - id: 123
+                description: 'First order'
+    PageProduct:
+      allOf:
+        - $ref: '#/components/schemas/PageMeta'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Product'
+      example:
+        page: 0
+        size: 20
+        totalElements: 2
+        totalPages: 1
+        sort: 'id,asc'
+        content:
+          - id: 501
+            description: 'Mug'
+            orderIds:
+              - 123
+          - id: 502
+            description: 'Wet wipes'
+            orderIds:
+              - 123
+              - 124
     Order:
       title: Order
       type: object
@@ -150,8 +385,29 @@ components:
             id:
               type: integer
               format: int64
-            description:
+            name:
               type: string
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              description:
+                type: string
+      example:
+        id: 123
+        description: 'First order'
+        customer:
+          id: 101
+          name: 'Suresh Kumar'
+        products:
+          - id: 501
+            description: 'Mug'
+          - id: 502
+            description: 'Wet wipes'
     Customer:
       title: Customer
       type: object
@@ -173,6 +429,103 @@ components:
                 type: string
                 x-stoplight:
                   id: mq08x82g95zl9
+      example:
+        id: 101
+        name: 'Suresh Kumar'
+        orders:
+          - id: 123
+            description: 'First order'
+          - id: 124
+            description: 'Office supplies'
+    Product:
+      title: Product
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+        orderIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+      example:
+        id: 501
+        description: 'Mug'
+        orderIds:
+          - 123
+          - 124
+    OrderCreate:
+      type: object
+      required:
+        - description
+        - customer
+        - products
+      properties:
+        description:
+          type: string
+        customer:
+          type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+              format: int64
+        products:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                type: integer
+                format: int64
+      example:
+        description: 'First order'
+        customer:
+          id: 101
+        products:
+          - id: 501
+          - id: 502
+    CustomerCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+      example:
+        name: 'Suresh Kumar'
+    ProductCreate:
+      type: object
+      required:
+        - description
+      properties:
+        description:
+          type: string
+      example:
+        description: 'Mug'
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
 tags:
   - name: store
     description: store operations

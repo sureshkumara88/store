@@ -13,8 +13,7 @@ import java.util.List;
 @Data
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "\"order\"")
-public class Order {
+public class Product {
     @Id
     @ToString.Include
     @EqualsAndHashCode.Include
@@ -24,13 +23,6 @@ public class Order {
     @ToString.Include
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Customer customer;
-
-    @ManyToMany
-    @JoinTable(
-            name = "order_product",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> products = new ArrayList<>();
+    @ManyToMany(mappedBy = "products")
+    private List<Order> orders = new ArrayList<>();
 }
