@@ -4,7 +4,6 @@ import com.example.store.dto.OrderCustomerDTO;
 import com.example.store.dto.OrderDTO;
 import com.example.store.dto.OrderProductDTO;
 import com.example.store.entity.Order;
-import com.example.store.mapper.CustomerMapper;
 import com.example.store.mapper.OrderMapper;
 import com.example.store.repository.CustomerRepository;
 import com.example.store.repository.OrderRepository;
@@ -37,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderController.class)
-@ComponentScan(basePackageClasses = CustomerMapper.class)
+@ComponentScan(basePackageClasses = OrderMapper.class)
 class OrderControllerTests {
 
     private static final String BASE_URL = "http://localhost";

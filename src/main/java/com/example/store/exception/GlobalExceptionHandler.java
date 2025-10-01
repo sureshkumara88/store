@@ -1,4 +1,4 @@
-package com.example.store.controller;
+package com.example.store.exception;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
