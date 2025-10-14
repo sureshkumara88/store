@@ -42,3 +42,22 @@
     * Moved the OpenAPI spec into the static resources location (`src/main/resources/static`)
     * Integrated Swagger UI via springdoc so the API documentation is now accessible at:
         * [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+8. Enabled Dockerization
+    * Added `Dockerfile` and `docker-compose` files to containerize the Spring Boot application
+    * To build and run the application using Docker, use the following command:
+      ```shell 
+       docker compose up --build -d
+      ```
+    * To check running containers
+      ```shell
+       docker compose ps
+      ```
+   * To see logs for Spring Boot service
+     ```shell
+      docker compose logs -f store
+     ```  
+   * To stop containers and delete Postgres data volume
+     ```shell
+      docker compose down -v
+     ```    
+      
